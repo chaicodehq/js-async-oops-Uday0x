@@ -73,15 +73,100 @@
  */
 export function LassiStand(name, city) {
   // Your code here
+  this.name = name,
+  this.city = city
+  this.menu = [],
+  this.orders = [],
+  this._nextOrderId = 1
 }
 
 // Add prototype methods here:
-// LassiStand.prototype.addFlavor = function(flavor, price) { ... }
-// LassiStand.prototype.takeOrder = function(customerName, flavor, quantity) { ... }
-// LassiStand.prototype.completeOrder = function(orderId) { ... }
-// LassiStand.prototype.getRevenue = function() { ... }
-// LassiStand.prototype.getMenu = function() { ... }
+ LassiStand.prototype.addFlavor = function(flavor, price) { 
+  if(price<=0){
+    return -1
+  }
+
+    let exists = this.menu.some(i => i.flavor === flavor)
+
+    if(exists){
+      return -1
+    }
+    this.menu.push({flavor,price})
+    return this.menu.length
+  
+
+  
+ }
+
+ LassiStand.prototype.takeOrder = function(customerName, flavor, quantity) { 
+      
+      let totalP = 0
+      this.menu.forEach((i)=>{
+          if(i.flavor == flavor){
+            totalP = i.price
+          }
+      })
+
+      if(quantity <=0){
+        return -1
+      }
+
+      let exists = this.menu.find(i=>i.flavor === flavor)
+      if(exists){
+        let obj ={
+          id:this._nextOrderId++,
+          customer:customerName,
+          flavor:flavor,
+          quantity,
+          total:totalP*quantity,
+          status:"pending"
+        }
+
+        this.orders.push(obj)
+
+      
+        return obj.id
+      }else{
+        return -1
+      }
+ }
+LassiStand.prototype.completeOrder = function(orderId) {
+      // this.orders.forEach((ele)=>{
+      //   if(ele.id == orderId){
+      //     ele.status = "completed"
+      //     return false
+      //   }else if(ele.status == "completd" || ele.id == undefined){
+      //     return true
+      //   }
+      // })
+
+      let item = this.orders.find((i)=>i.id == orderId)
+      if(!item || item.status == "completed"){
+        return false
+      }
+      item.status = "completed"
+      return true
+ }
+LassiStand.prototype.getRevenue = function() { 
+  let totalPrice =0
+  this.orders.forEach((i)=>{
+    if(i.status == "completed"){
+        totalPrice+=i.total
+    }
+  })
+
+  return totalPrice
+ }
+LassiStand.prototype.getMenu = function() {
+    let newMenu = [...this.menu]
+    return newMenu
+ }
 
 export function isLassiStand(obj) {
   // Your code here
+  if(obj instanceof LassiStand){
+      return true
+  }else{
+    return false
+  }
 }
